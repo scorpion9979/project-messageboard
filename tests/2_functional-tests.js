@@ -20,7 +20,7 @@ suite('Functional Tests', function() {
     suite('POST', function() {
       chai.request(server)
           .post('/api/threads/test')
-          .send({text: 'test test', delete_password: 'password'})
+          .send({_id: 'test_thread_id', text: 'test test', delete_password: 'password'})
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.isString(res.body.text, 'thread text isn\'t a string');
@@ -54,7 +54,21 @@ suite('Functional Tests', function() {
   suite('API ROUTING FOR /api/replies/:board', function() {
 
     suite('POST', function() {
-
+      chai.request(server)
+          .post('/api/replies/test')
+          .send({thread_id: 'test_thread_id', text: 'test reply', delete_password: 'pass123'})
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.isString(res.body.replies[0].text, 'reply text isn\'t a string');
+            assert.isString(res.body.replies[0].delete_password, 'reply delete_password isn\'t a string');
+            assert.isString(res.body.replies[0].created_on, 'reply created_on isn\'t a string');
+            assert.isBoolean(res.body.replies[0].reported, 'reported isn\'t a boolean');
+            assert.equal(res.body._id, 'test_thread_id', 'thread id mismatch');
+            assert.notEqual(res.body.created_on, res.body.bumped_on, 'bumped_on didn\'t change');
+            assert.equal(res.body.replies[0].text, 'test reply', 'reply text mismatch');
+            assert.equal(res.body.replies[0].delete_password, 'pass123', 'reply delete_password mismatch');
+            done();
+          });
     });
 
     suite('GET', function() {
