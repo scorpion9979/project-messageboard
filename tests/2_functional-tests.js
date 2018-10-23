@@ -38,7 +38,23 @@ suite('Functional Tests', function() {
     });
 
     suite('GET', function() {
-
+      chai.request(server)
+          .get('/api/threads/test')
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.isArray(res.body, 'response isn\'t an array');
+            assert.equal(res.body.length, 10, 'response array isn\'t of length 10');
+            res.body.forEach(thread => {
+              assert.isString(thread.text, 'thread text isn\'t a string');
+              assert.notProperty(thread.delete_password, 'delete_password shouldn\'t be sent');
+              assert.isString(thread.created_on, 'created_on isn\'t a string');
+              assert.isString(thread.bumped_on, 'bumped_on isn\'t a string');
+              assert.notProperty(thread.reported, 'reported shouldn\'t be sent');
+              assert.isArray(thread.replies, 'replies aren\'t an array');
+              assert.equal(thread.replies.length, 3, 'thread replies aren\'t of length 3');
+            });
+            done();
+          });
     });
 
     suite('DELETE', function() {
@@ -72,7 +88,19 @@ suite('Functional Tests', function() {
     });
 
     suite('GET', function() {
-
+      chai.request(server)
+          .get('/api/replies/test')
+          .query({thread_id: 'test_thread_id'})
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.isString(res.body.text, 'thread text isn\'t a string');
+            assert.notProperty(res.body.delete_password, 'delete_password shouldn\'t be sent');
+            assert.isString(res.body.created_on, 'created_on isn\'t a string');
+            assert.isString(res.body.bumped_on, 'bumped_on isn\'t a string');
+            assert.notProperty(res.body.reported, 'reported shouldn\'t be sent');
+            assert.isArray(res.body.replies, 'replies aren\'t an array');
+            done();
+          });
     });
 
     suite('PUT', function() {
