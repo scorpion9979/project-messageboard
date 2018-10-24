@@ -18,7 +18,8 @@ suite('Functional Tests', function() {
   suite('API ROUTING FOR /api/threads/:board', function() {
 
     suite('POST', function() {
-      chai.request(server)
+      test('POST thread', function(done) {
+        chai.request(server)
           .post('/api/threads/test')
           .send({_id: 'test_thread_id', text: 'test test', delete_password: 'password'})
           .end(function(err, res) {
@@ -35,10 +36,12 @@ suite('Functional Tests', function() {
             assert.equal(res.body.reported, false, 'reported bool value mismatch');
             done();
           });
+      });
     });
 
     suite('GET', function() {
-      chai.request(server)
+      test('GET thread', function(done) {
+        chai.request(server)
           .get('/api/threads/test')
           .end(function(err, res) {
             assert.equal(res.status, 200);
@@ -55,10 +58,30 @@ suite('Functional Tests', function() {
             });
             done();
           });
+      });
     });
 
     suite('DELETE', function() {
-
+      test('Invalid _id', function(done) {
+        chai.request(server)
+          .del('/api/threads/test')
+          .send({thread_id: 'test_thread_id', delete_password: 'password'})
+          .end(function(err, res) {
+            assert.equal(res.status, 400);
+            assert.equal(res.text, 'incorrect password');
+            done();
+          });
+      });
+      test('Valid _id', function(done) {
+        chai.request(server)
+          .del('/api/threads/test')
+          .send({thread_id: 'test_thread_id', delete_password: 'wfef2'})
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'success');
+            done();
+          });
+      });
     });
 
     suite('PUT', function() {
@@ -70,9 +93,10 @@ suite('Functional Tests', function() {
   suite('API ROUTING FOR /api/replies/:board', function() {
 
     suite('POST', function() {
-      chai.request(server)
+      test('POST reply', function(done) {
+        chai.request(server)
           .post('/api/replies/test')
-          .send({thread_id: 'test_thread_id', text: 'test reply', delete_password: 'pass123'})
+          .send({_id: 'test_reply_id', thread_id: 'test_thread_id', text: 'test reply', delete_password: 'pass123'})
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.isString(res.body.replies[0].text, 'reply text isn\'t a string');
@@ -85,10 +109,12 @@ suite('Functional Tests', function() {
             assert.equal(res.body.replies[0].delete_password, 'pass123', 'reply delete_password mismatch');
             done();
           });
+      });
     });
 
     suite('GET', function() {
-      chai.request(server)
+      test('GET reply', function(done) {
+        chai.request(server)
           .get('/api/replies/test')
           .query({thread_id: 'test_thread_id'})
           .end(function(err, res) {
@@ -101,6 +127,7 @@ suite('Functional Tests', function() {
             assert.isArray(res.body.replies, 'replies aren\'t an array');
             done();
           });
+      });
     });
 
     suite('PUT', function() {
@@ -108,7 +135,26 @@ suite('Functional Tests', function() {
     });
 
     suite('DELETE', function() {
-
+      test('Invalid _id', function(done) {
+        chai.request(server)
+          .del('/api/replies/test')
+          .send({thread_id: 'test_thread_id', reply_id: 'test_reply_id', delete_password: 'pass456'})
+          .end(function(err, res) {
+            assert.equal(res.status, 400);
+            assert.equal(res.text, 'incorrect password');
+            done();
+          });
+      });
+      test('Valid _id', function(done) {
+        chai.request(server)
+          .del('/api/replies/test')
+          .send({thread_id: 'test_thread_id', reply_id: 'test_reply_id', delete_password: 'pass123'})
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'success');
+            done();
+          });
+      });
     });
 
   });
