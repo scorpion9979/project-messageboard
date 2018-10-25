@@ -85,7 +85,16 @@ suite('Functional Tests', function() {
     });
 
     suite('PUT', function() {
-
+      test('Valid _id', function(done) {
+        chai.request(server)
+          .put('/api/threads/test')
+          .send({thread_id: 'test_thread_id'})
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'success');
+            done();
+          });
+      });
     });
 
   });
@@ -131,7 +140,16 @@ suite('Functional Tests', function() {
     });
 
     suite('PUT', function() {
-
+      test('Valid _id', function(done) {
+        chai.request(server)
+          .put('/api/replies/test')
+          .send({thread_id: 'test_thread_id', reply_id: 'test_reply_id'})
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'success');
+            done();
+          });
+      });
     });
 
     suite('DELETE', function() {
