@@ -106,6 +106,7 @@ module.exports = function(app) {
        });
       })
       .delete(function(req, res) {
+        let board = req.params.board;
         let delete_password = req.body.delete_password;
         let threadId = req.body.thread_id;
         let replyId = req.body.reply_id;
@@ -118,6 +119,10 @@ module.exports = function(app) {
           if (delete_password === rep.delete_password) {
             rep.text = '[deleted]';
             th.save();
+            // TODO: uncomment after finishing GET an PUT logic
+            // if (board === 'test') {
+            //   th.remove(); // completely remove thread model to reset tests
+            // }
             res.send('success');
           } else {
             res.status(400)
