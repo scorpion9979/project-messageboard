@@ -62,22 +62,35 @@ module.exports = function(app) {
        });
      })
      .delete(function(req, res) {
-       let delete_password = req.body.delete_password;
-       let threadId = req.body.thread_id;
-       Thread.findByIdAndUpdate(threadId, {new: true}, function(err, th) {
-        if (err) {
-          res.status(400)
-             .send(err);
-        } else if (delete_password === th.delete_password) {
-          th.text = '[deleted]';
-          th.save();
-          res.send('success');
-        } else {
-          res.status(400)
-             .send('incorrect password');
-        }
-       });
-     });
+      let delete_password = req.body.delete_password;
+      let threadId = req.body.thread_id;
+      Thread.findByIdAndUpdate(threadId, {new: true}, function(err, th) {
+       if (err) {
+         res.status(400)
+            .send(err);
+       } else if (delete_password === th.delete_password) {
+         th.text = '[deleted]';
+         th.save();
+         res.send('success');
+       } else {
+         res.status(400)
+            .send('incorrect password');
+       }
+      });
+    })
+    .put(function(req, res) {
+      let threadId = req.body.thread_id;
+      Thread.findByIdAndUpdate(threadId, {new: true}, function(err, th) {
+       if (err) {
+         res.status(400)
+            .send(err);
+       } else {
+         th.reported = true;
+         th.save();
+         res.send('success');
+       }
+      });
+    });
 
   app.route('/api/replies/:board')
      .post(function(req, res) {
@@ -128,6 +141,21 @@ module.exports = function(app) {
             res.status(400)
                .send('incorrect password');
           }
+         }
+        });
+      })
+      .put(function(req, res) {
+        let threadId = req.body.thread_id;
+        let replyId = req.body.reply_id;
+        Thread.findByIdAndUpdate(threadId, {new: true}, function(err, th) {
+         if (err) {
+           res.status(400)
+              .send(err);
+         } else {
+           let rep = th.replies.id(replyId);
+           rep.reported = true;
+           th.save();
+           res.send('success');
          }
         });
       });
