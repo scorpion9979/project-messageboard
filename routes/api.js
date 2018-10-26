@@ -60,6 +60,23 @@ module.exports = function(app) {
            res.send(th);
          }
        });
+     })
+     .delete(function(req, res) {
+       let delete_password = req.body.delete_password;
+       let threadId = req.body.thread_id;
+       Thread.findByIdAndUpdate(threadId, {new: true}, function(err, th) {
+        if (err) {
+          res.status(400)
+             .send(err);
+        } else if (delete_password === th.delete_password) {
+          th.text = '[deleted]';
+          th.save();
+          res.send('success');
+        } else {
+          res.status(400)
+             .send('incorrect password');
+        }
+       });
      });
 
   app.route('/api/replies/:board')
@@ -87,5 +104,26 @@ module.exports = function(app) {
           });
          }
        });
+      })
+      .delete(function(req, res) {
+        let delete_password = req.body.delete_password;
+        let threadId = req.body.thread_id;
+        let replyId = req.body.reply_id;
+        Thread.findByIdAndUpdate(threadId, {new: true}, function(err, th) {
+         if (err) {
+           res.status(400)
+              .send(err);
+         } else {
+          let rep = th.replies.id(replyId);
+          if (delete_password === rep.delete_password) {
+            rep.text = '[deleted]';
+            th.save();
+            res.send('success');
+          } else {
+            res.status(400)
+               .send('incorrect password');
+          }
+         }
+        });
       });
 };
