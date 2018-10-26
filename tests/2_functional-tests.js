@@ -46,7 +46,7 @@ suite('Functional Tests', function() {
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.isArray(res.body, 'response isn\'t an array');
-            assert.equal(res.body.length, 10, 'response array isn\'t of length 10');
+            assert.isAtMost(res.body.length, 10, 'response array isn\'t of length 10');
             res.body.forEach(thread => {
               assert.isString(thread.text, 'thread text isn\'t a string');
               assert.notProperty(thread, 'delete_password', 'delete_password shouldn\'t be sent');
@@ -54,7 +54,7 @@ suite('Functional Tests', function() {
               assert.isString(thread.bumped_on, 'bumped_on isn\'t a string');
               assert.notProperty(thread, 'reported', 'reported shouldn\'t be sent');
               assert.isArray(thread.replies, 'replies aren\'t an array');
-              assert.equal(thread.replies.length, 3, 'thread replies aren\'t of length 3');
+              assert.isAtMost(thread.replies.length, 3, 'thread replies aren\'t of length 3');
             });
             done();
           });
