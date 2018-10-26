@@ -18,20 +18,6 @@ mongoose.connect(CONNECTION_STRING);
 
 const Schema = mongoose.Schema;
 
-// thread:
-// board is post param
-// _id, text, created_on, bumped_on, reported(boolean), delete_password, & replies(array)
-const threadSchema = new Schema({
-  _id: {type: String, required: true},
-  text: {type: String, required: true},
-  created_on: {type: String, required: false, default: () => new Date().toISOString()},
-  bumped_on: {type: String, required: false, default: () => new Date().toISOString()},
-  reported: {type: Boolean, required: false, default: false},
-  delete_password: {type: String, required: true},
-  replies: {type: [Object], required: false, default: []},
-});
-const Thread = mongoose.model('Thread', threadSchema);
-
 // thread reply:
 // _id, text, created_on, delete_password, & reported
 const replySchema = new Schema({
@@ -42,6 +28,20 @@ const replySchema = new Schema({
   reported: {type: Boolean, required: false, default: false},
 });
 const Reply = mongoose.model('Reply', replySchema);
+
+// thread:
+// board is post param
+// _id, text, created_on, bumped_on, reported(boolean), delete_password, & replies(array)
+const threadSchema = new Schema({
+  _id: {type: String, required: true},
+  text: {type: String, required: true},
+  created_on: {type: String, required: false, default: () => new Date().toISOString()},
+  bumped_on: {type: String, required: false, default: () => new Date().toISOString()},
+  reported: {type: Boolean, required: false, default: false},
+  delete_password: {type: String, required: true},
+  replies: {type: [replySchema], required: false, default: []},
+});
+const Thread = mongoose.model('Thread', threadSchema);
 
 module.exports = function(app) {
 
@@ -75,23 +75,16 @@ module.exports = function(app) {
               .send(err);
          } else {
           let reply = new Reply({_id: id, text: text, delete_password: delete_password});
-          reply.save(function(err1, rep) {
-            if (err1) {
+          th.bumped_on = reply.created_on;
+          th.replies.push(reply);
+          th.save(function(err2, th1) {
+            if (err2) {
               res.status(400)
-                 .send(err1);
-             } else {
-               th.bumped_on = rep.created_on;
-               th.replies.push(rep);
-               th.save(function(err2, th1) {
-                if (err2) {
-                  res.status(400)
-                     .send(err2);
-                 } else {
-                  res.send(th1);
-                 }
-               });
-             }
-           });
+                 .send(err2);
+            } else {
+              res.send(th1);
+            }
+          });
          }
        });
       });
