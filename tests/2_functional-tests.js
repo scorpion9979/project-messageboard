@@ -49,10 +49,10 @@ suite('Functional Tests', function() {
             assert.equal(res.body.length, 10, 'response array isn\'t of length 10');
             res.body.forEach(thread => {
               assert.isString(thread.text, 'thread text isn\'t a string');
-              assert.notProperty(thread.delete_password, 'delete_password shouldn\'t be sent');
+              assert.notProperty(thread, 'delete_password', 'delete_password shouldn\'t be sent');
               assert.isString(thread.created_on, 'created_on isn\'t a string');
               assert.isString(thread.bumped_on, 'bumped_on isn\'t a string');
-              assert.notProperty(thread.reported, 'reported shouldn\'t be sent');
+              assert.notProperty(thread, 'reported', 'reported shouldn\'t be sent');
               assert.isArray(thread.replies, 'replies aren\'t an array');
               assert.equal(thread.replies.length, 3, 'thread replies aren\'t of length 3');
             });
@@ -129,11 +129,15 @@ suite('Functional Tests', function() {
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.isString(res.body.text, 'thread text isn\'t a string');
-            assert.notProperty(res.body.delete_password, 'delete_password shouldn\'t be sent');
+            assert.notProperty(res.body, 'delete_password', 'delete_password shouldn\'t be sent for threads');
             assert.isString(res.body.created_on, 'created_on isn\'t a string');
             assert.isString(res.body.bumped_on, 'bumped_on isn\'t a string');
-            assert.notProperty(res.body.reported, 'reported shouldn\'t be sent');
+            assert.notProperty(res.body, 'reported', 'reported shouldn\'t be sent for threads');
             assert.isArray(res.body.replies, 'replies aren\'t an array');
+            res.body.replies.forEach(reply => {
+              assert.notProperty(reply, 'delete_password', 'delete_password shouldn\'t be sent for replies');
+              assert.notProperty(reply, 'reported', 'reported shouldn\'t be sent for replies');
+            });
             done();
           });
       });
