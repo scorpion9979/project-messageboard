@@ -90,6 +90,22 @@ module.exports = function(app) {
          res.send('success');
        }
       });
+    })
+    .get(function(req, res) {
+      Thread.find({}, function(err, ths) {
+        if (err) {
+          res.send(err);
+        } else {
+          ths = ths.map(e => {
+            let replies = e.replies.map(r => ({_id: r._id, text: r.text, created_on: r.created_on}))
+                                   .sort((a, b) => new Date(b.created_on) - new Date(a.created_on))
+                                   .slice(0, 3);
+            return ({_id: e._id, text: e.text, created_on: e.created_on, bumped_on: e.bumped_on, replies: replies});
+        })
+                   .sort((a, b) => new Date(b.bumped_on) - new Date(a.bumped_on)).slice(0, 10);
+          res.send(ths);
+        }
+      });
     });
 
   app.route('/api/replies/:board')
@@ -132,10 +148,9 @@ module.exports = function(app) {
           if (delete_password === rep.delete_password) {
             rep.text = '[deleted]';
             th.save();
-            // TODO: uncomment after finishing GET an PUT logic
-            // if (board === 'test') {
-            //   th.remove(); // completely remove thread model to reset tests
-            // }
+            if (board === 'test') {
+              th.remove(); // completely remove thread model to reset tests
+            }
             res.send('success');
           } else {
             res.status(400)

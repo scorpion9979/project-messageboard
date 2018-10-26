@@ -14,7 +14,7 @@ var server = require('../server');
 chai.use(chaiHttp);
 
 suite('Functional Tests', function() {
-
+  this.timeout(15000);
   suite('API ROUTING FOR /api/threads/:board', function() {
 
     suite('POST', function() {
