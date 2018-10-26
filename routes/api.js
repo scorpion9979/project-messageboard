@@ -158,5 +158,27 @@ module.exports = function(app) {
            res.send('success');
          }
         });
+      })
+      .get(function(req, res) {
+        let threadId = req.query.thread_id;
+        Thread.findById(threadId, function(err, th) {
+          if (err) {
+            res.status(400)
+               .send(err);
+          } else {
+            let filteredReplies = th.replies.map(e => ({
+              _id: e._id,
+              text: e.text,
+              created_on: e.created_on,
+            }));
+            res.send({
+              _id: th._id,
+              text: th.text,
+              created_on: th.created_on,
+              bumped_on: th.bumped_on,
+              replies: filteredReplies,
+            });
+          }
+        });
       });
 };
