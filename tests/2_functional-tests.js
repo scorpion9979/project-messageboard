@@ -65,7 +65,7 @@ suite('Functional Tests', function() {
       test('Invalid _id', function(done) {
         chai.request(server)
           .del('/api/threads/test')
-          .send({thread_id: 'test_thread_id', delete_password: 'password'})
+          .send({thread_id: 'test_thread_id', delete_password: 'wfef2'})
           .end(function(err, res) {
             assert.equal(res.status, 400);
             assert.equal(res.text, 'incorrect password');
@@ -75,7 +75,7 @@ suite('Functional Tests', function() {
       test('Valid _id', function(done) {
         chai.request(server)
           .del('/api/threads/test')
-          .send({thread_id: 'test_thread_id', delete_password: 'wfef2'})
+          .send({thread_id: 'test_thread_id', delete_password: 'password'})
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.text, 'success');
