@@ -10,7 +10,7 @@
 
 var expect = require('chai').expect;
 var mongoose = require('mongoose');
-var ObjectId = require('mongoose').ObjectId;
+var ObjectId = require('mongoose').Types.ObjectId;
 require('dotenv').config();
 const CONNECTION_STRING = process.env.DB;
 
