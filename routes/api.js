@@ -69,8 +69,7 @@ module.exports = function(app) {
          res.status(400)
             .send(err);
        } else if (delete_password === th.delete_password) {
-         th.text = '[deleted]';
-         th.save();
+         th.remove();
          res.send('success');
        } else {
          res.status(400)
@@ -148,9 +147,6 @@ module.exports = function(app) {
           if (delete_password === rep.delete_password) {
             rep.text = '[deleted]';
             th.save();
-            if (board === 'test') {
-              th.remove(); // completely remove thread model to reset tests
-            }
             res.send('success');
           } else {
             res.status(400)

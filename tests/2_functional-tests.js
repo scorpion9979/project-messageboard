@@ -61,29 +61,6 @@ suite('Functional Tests', function() {
       });
     });
 
-    suite('DELETE', function() {
-      test('Invalid _id', function(done) {
-        chai.request(server)
-          .del('/api/threads/test')
-          .send({thread_id: 'test_thread_id', delete_password: 'wfef2'})
-          .end(function(err, res) {
-            assert.equal(res.status, 400);
-            assert.equal(res.text, 'incorrect password');
-            done();
-          });
-      });
-      test('Valid _id', function(done) {
-        chai.request(server)
-          .del('/api/threads/test')
-          .send({thread_id: 'test_thread_id', delete_password: 'password'})
-          .end(function(err, res) {
-            assert.equal(res.status, 200);
-            assert.equal(res.text, 'success');
-            done();
-          });
-      });
-    });
-
     suite('PUT', function() {
       test('Valid _id', function(done) {
         chai.request(server)
@@ -179,6 +156,31 @@ suite('Functional Tests', function() {
       });
     });
 
+  });
+
+  suite('DELETE TESTING FOR /api/threads/:board', function() {
+    suite('DELETE', function() {
+      test('Invalid _id', function(done) {
+        chai.request(server)
+          .del('/api/threads/test')
+          .send({thread_id: 'test_thread_id', delete_password: 'wfef2'})
+          .end(function(err, res) {
+            assert.equal(res.status, 400);
+            assert.equal(res.text, 'incorrect password');
+            done();
+          });
+      });
+      test('Valid _id', function(done) {
+        chai.request(server)
+          .del('/api/threads/test')
+          .send({thread_id: 'test_thread_id', delete_password: 'password'})
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'success');
+            done();
+          });
+      });
+    });
   });
 
 });
